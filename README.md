@@ -2,7 +2,7 @@
 The final project of the Python QA Engineer course
 
 
-#  Проект по тестированию VPN + IDS
+#  Проект по тестированию VPN
 
 ##  Цель проекта
 Построить тестовый стенд и написать автотесты для проверки корректности работы **VPN (WireGuard)** в связке с **IDS (Intrusion Detection System)**.
