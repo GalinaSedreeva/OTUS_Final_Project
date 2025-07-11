@@ -42,7 +42,7 @@ project/
 ├── docker-compose.yml        # Файл для разворачивания стенда
 ├── tests/
 │   ├── conftest.py           # Общие фикстуры для тестов
-│   └── test_vpn.py  # Автотесты
+│   └── test_vpn.py           # Автотесты
 ├── README.md                 # Этот файл
 └── allure-results/           # Результаты тестов
 └── allure-report/            # Allure-отчёты
