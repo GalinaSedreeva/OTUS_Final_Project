@@ -26,6 +26,7 @@ jobs:
         run: |
           mkdir -p allure-results
           pytest tests/test_vpn2.py --alluredir=./allure-results
+          touch ./report/.nojekyll
 
       - name: Generate Allure Report
         run: |
