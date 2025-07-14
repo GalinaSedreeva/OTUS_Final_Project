@@ -3,7 +3,7 @@ name: Run tests and publish Allure report
 on:
   push:
     branches:
-      - final 
+      - final2 
 
 jobs:
   build:
