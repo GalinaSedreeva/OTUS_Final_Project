@@ -51,20 +51,18 @@ project/
 ---
 
 
-### 3. Запуск стенда:
-```bash
+### 1. Поднимаем стенд
 docker-compose up -d
-```
 
-### 4. Запуск тестов:
-```bash
-pytest tests/test_vpn.py -v --alluredir=./reports/
-```
+### 2. Запускаем тесты и сохраняем результаты Allure
+pytest tests/test_vpn.py -v --alluredir=./allure-results --clean-alluredir
 
-### 5. Просмотр отчёта:
-```bash
+### 3. Генерируем HTML-отчёт
+allure generate ./allure-results -o ./allure-report --clean
+
+### 4. Открываем интерактивный отчёт
 allure serve ./allure-results
-```
+
 
 ---
 
