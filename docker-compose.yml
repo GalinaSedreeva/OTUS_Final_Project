@@ -66,6 +66,7 @@ services:
            mkdir -p /tests && 
            cd /tests &&
            pytest test_vpn.py --alluredir=/allure-results   &&
+           allure serve ./allure-results &&
            tail -f /dev/null"
     restart: unless-stopped
 
