@@ -1,0 +1,39 @@
+name: Run tests and publish Allure report
+
+on:
+  push:
+    branches:
+      - main  # Можно изменить на нужную ветку, например `master` или `develop`
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest allure-pytest
+
+      - name: Run tests with Allure
+        run: |
+          mkdir -p allure-results
+          pytest tests/test_vpn2.py --alluredir=./allure-results
+
+      - name: Generate Allure Report
+        run: |
+          pip install allure-cli
+          allure generate ./allure-results -o ./allure-report --clean
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
