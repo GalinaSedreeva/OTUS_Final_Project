@@ -3,7 +3,7 @@ name: Run tests and publish Allure report
 on:
   push:
     branches:
-      - main  # Можно изменить на нужную ветку, например `master` или `develop`
+      - final 
 
 jobs:
   build:
