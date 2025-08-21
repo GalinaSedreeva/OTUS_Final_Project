@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Защищенный веб-сервер</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #28a745;
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+        }
+        .info {
+            background: #d1ecf1;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #17a2b8;
+            margin: 20px 0;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Защищенный веб-сервер</h1>
+        
+        <div class="success">
+            <strong>✅ Успешно подключено!</strong><br>
+            Вы получили доступ к защищенному серверу через VPN-соединение.
+        </div>
+
+        <div class="info">
+            <h3>Информация о подключении:</h3>
+            <p><strong>Время подключения:</strong> <span id="currentTime"></span></p>
+            <p><strong>Ваш IP в VPN:</strong> <span id="clientIp">Загружается...</span></p>
+            <p><strong>Статус сервера:</strong> <span id="serverStatus">Проверяется...</span></p>
+        </div>
+
+        <h3>Доступные API эндпоинты:</h3>
+        <div class="endpoint">GET /api/status - JSON статус сервера</div>
+        <div class="endpoint">GET /status - Текстовая информация о подключении</div>
+
+        <h3>Тестирование подключения:</h3>
+        <button onclick="testAPI()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Тест API
+        </button>
+        <button onclick="testStatus()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+            Тест статуса
+        </button>
+
+        <div id="testResults" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        // Отображение текущего времени
+        document.getElementById('currentTime').textContent = new Date().toLocaleString('ru-RU');
+
+        // Получение IP клиента
+        fetch('/status')
+            .then(response => response.text())
+            .then(data => {
+                const ipMatch = data.match(/IP клиента: ([\d\.]+)/);
+                if (ipMatch) {
+                    document.getElementById('clientIp').textContent = ipMatch[1];
+                }
+            })
+            .catch(err => {
+                document.getElementById('clientIp').textContent = 'Ошибка получения IP';
+            });
+
+        // Проверка статуса сервера
+        fetch('/api/status')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('serverStatus').textContent = data.status.toUpperCase();
+            })
+            .catch(err => {
+                document.getElementById('serverStatus').textContent = 'ОШИБКА';
+            });
+
+        // Функции тестирования
+        function testAPI() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('testResults').innerHTML = 
+                        '<div style="background: #d4edda; padding: 15px; border-radius: 5px;">' +
+                        '<strong>✅ API тест успешен:</strong><br>' +
+                        '<pre>' + JSON.stringify(data, null, 2) + '</pre>' +
+                        '</div>';
+                })
+                .catch(err => {
+                    document.getElementById('testResults').innerHTML = 
+                        '<div style="background: #f8d7da; padding: 15px; border-radius: 5px;">' +
+                        '<strong>❌ API тест провален:</strong><br>' + err.message +
+                        '</div>';
+                });
+        }
+
+        function testStatus() {
+            fetch('/status')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('testResults').innerHTML = 
+                        '<div style="background: #d4edda; padding: 15px; border-radius: 5px;">' +
+                        '<strong>✅ Статус тест успешен:</strong><br>' +
+                        '<pre>' + data + '</pre>' +
+                        '</div>';
+                })
+                .catch(err => {
+                    document.getElementById('testResults').innerHTML = 
+                        '<div style="background: #f8d7da; padding: 15px; border-radius: 5px;">' +
+                        '<strong>❌ Статус тест провален:</strong><br>' + err.message +
+                        '</div>';
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+FROM linuxserver/wireguard:latest
+
+ENV \
+PUID=1000 \
+PGID=1000 \
+TZ=Europe/Moscow \
+VPN_PROTOCOL=wireguard
+
+RUN <<EOF
+apk add --no-cache python3 py3-pip py3-virtualenv openssh-client curl wireguard-tools &&
+virtualenv /venv &&
+source /venv/bin/activate &&
+pip3 install pytest allure-pytest paramiko requests
+EOF

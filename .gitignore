@@ -1,0 +1,41 @@
+# === Python & Virtual Environment ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+.coverage.*
+.cache/
+.pytest_cache/
+
+# === Allure Reports & Results ===
+allure-results/
+allure-report/
+allure-reports/
+*.xml
+*.json
+
+# === VS Code ===
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# === IDE & Editor Temp Files ===
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+logs/
+*.log

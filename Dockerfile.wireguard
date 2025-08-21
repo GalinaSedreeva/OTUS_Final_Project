@@ -1,0 +1,21 @@
+FROM linuxserver/wireguard:latest
+
+ENV \
+PUID=1000 \
+PGID=1000 \
+TZ=Europe/Moscow \
+SERVERURL=wireguard \
+SERVERPORT=51820 \
+PEERS=1 \
+PEERDNS=auto \
+INTERNAL_SUBNET=10.13.13.0/24 \
+ALLOWEDIPS=10.13.13.0/24,172.21.0.0/24 \
+LOG_CONFS=true
+
+RUN <<EOF
+apk add --no-cache openssh &&
+ssh-keygen -A &&
+mkdir -p /root/.ssh &&
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config &&
+echo 'root:123' | chpasswd 
+EOF

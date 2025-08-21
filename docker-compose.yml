@@ -1,0 +1,100 @@
+services:
+  wireguard:
+    container_name: wireguard
+    image: wireguard
+    build:
+      context: .
+      dockerfile: Dockerfile.wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./wireguard/server:/config
+      - /lib/modules:/lib/modules:ro
+    ports:
+      - "51820:51820"
+      - "2222:22"      
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    networks:
+      external_net:
+        ipv4_address: 172.20.0.10
+      internal_net:
+        ipv4_address: 172.21.0.10
+    command: /usr/sbin/sshd -D 
+
+  client:
+    container_name: client
+    image: client
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    volumes:
+      - ./wireguard/config:/config
+      - /lib/modules:/lib/modules
+      - ./tests:/tests
+      - ./allure-results:/allure-results 
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    networks:
+        external_net:
+          ipv4_address: 172.20.0.11
+    command: >
+      sh -c "
+        source /venv/bin/activate &&
+        mkdir -p /tests &&
+        cd /tests &&
+        pytest test_vpn.py --alluredir=/allure-results &&
+        allure serve ./allure-results &&
+        tail -f /dev/null"
+    restart: unless-stopped
+
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    restart: unless-stopped
+    networks:
+      internal_net:
+        ipv4_address: 172.21.0.20
+
+  allure-report:
+    image: frankescobar/allure-docker-service:latest
+    container_name: allure-report
+    ports:
+      - "5050:5050"
+      - "58080:58080"
+    environment:
+      - CHECK_RESULTS_EVERY_SECONDS=5
+      - KEEP_HISTORY=true
+      - DEFAULT_URL_OVERRIDDEN=/project/default/test-cases
+    volumes:
+      - ./allure-results:/app/allure-results
+    networks:
+      - internal_net
+
+
+networks:
+  external_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
+
+  internal_net:
+    driver: bridge
+    internal: true  
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
+          gateway: 172.21.0.1
+          
